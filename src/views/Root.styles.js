@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Warapper = styled.div`
+export const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.lightGrey};
   display: flex;
   justify-content: center;

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Button = styled.button`
+export const Button = styled.button`
   padding: 7px 20px;
   font-size: ${({ theme }) => theme.fontSize.s};
   width: 22px;
@@ -19,5 +19,3 @@ const Button = styled.button`
     height: 100%;
   }
 `;
-
-export default Button;

@@ -1,54 +1,76 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Wrapper,
-  NewsSectionHeader,
   ArticleWrapper,
-  TittleWrapper,
   ContentWrapper,
-} from './NewsSection.styles';
-import { Button } from '../../atoms/Button/Button';
+  NewsSectionHeader,
+  TitleWrapper,
+  Wrapper,
+} from 'components/templates/NewsSection/NewsSection.styles';
+import { Button } from 'components/atoms/Button/Button';
+import axios from 'axios';
 
-const data = [
-  {
-    title: 'New computers at school',
-    category: 'Tech news',
-    content:
-      'Lorem ipsum lorem ipsu lorem ipsum lirem ipsum Lorem ipsum lorem ipsu Lorem ipsum lorem ipsu lorem ipsum lirem ipsum Lorem ipsum lorem ipsulorem ipsum lirem ipsum Lorem ipsum lorem ipsu lorem ipsum lirem ipsum',
-    image: 'https://unsplash.it/500/400',
-  },
-  {
-    title: 'New computers at school-2',
-    category: 'Tech news-2',
-    content:
-      '2--Lorem ipsum lorem ipsu lorem ipsum lirem ipsum Lorem ipsum lorem ipsu Lorem ipsum lorem ipsu lorem ipsum lirem ipsum Lorem ipsum lorem ipsulorem ipsum lirem ipsum Lorem ipsum lorem ipsu lorem ipsum lirem ipsum',
-    image: 'https://unsplash.it/500/400',
-  },
-  {
-    title: 'New computers at school-3',
-    category: 'Tech news-3',
-    content:
-      '3--Lorem ipsum lorem ipsu lorem ipsum lirem ipsum Lorem ipsum lorem ipsu Lorem ipsum lorem ipsu lorem ipsum lirem ipsum Lorem ipsum lorem ipsulorem ipsum lirem ipsum Lorem ipsum lorem ipsu lorem ipsum lirem ipsum',
-  },
-];
+export const query = `
+         {
+          allArticles {
+            id
+            title
+            category
+            content
+            image {
+              url
+            }
+          }
+        }
+      `;
 
 const NewsSection = () => {
+  const [articles, setArticles] = useState([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    console.log(process.env.REACT_APP_DATOCMS_TOKEN);
+    axios
+      .post(
+        'https://graphql.datocms.com/',
+        {
+          query,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${process.env.REACT_APP_DATOCMS_TOKEN}`,
+          },
+        }
+      )
+      .then(({ data: { data } }) => {
+        setArticles(data.allArticles);
+      })
+      .catch(() => {
+        setError(`Sorry, we couldn't load articles for you`);
+      });
+  }, []);
+
   return (
     <Wrapper>
-      <NewsSectionHeader>New feed section</NewsSectionHeader>
-      {data.map(({ title, category, content, image = null }) => (
-        <ArticleWrapper key={title}>
-          <TittleWrapper>
-            <h3>{title}</h3>
-            <p>{category}</p>
-          </TittleWrapper>
-          <ContentWrapper>
-            <p>{content}</p>
-            {image ? <img src={image} alt={'art img'} /> : null}
-          </ContentWrapper>
-          <Button isBig>Click mee</Button>
-        </ArticleWrapper>
-      ))}
+      <NewsSectionHeader>University news feed</NewsSectionHeader>
+      {articles.length > 0 ? (
+        articles.map(({ id, title, category, content, image = null }) => (
+          <ArticleWrapper key={id}>
+            <TitleWrapper>
+              <h3>{title}</h3>
+              <p>{category}</p>
+            </TitleWrapper>
+            <ContentWrapper>
+              <p>{content}</p>
+              {image ? <img src={image.url} alt="article" /> : null}
+            </ContentWrapper>
+            <Button isBig>Read more</Button>
+          </ArticleWrapper>
+        ))
+      ) : (
+        <NewsSectionHeader>{error ? error : 'Loading...'}</NewsSectionHeader>
+      )}
     </Wrapper>
   );
 };
+
 export default NewsSection;

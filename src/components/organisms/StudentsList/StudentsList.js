@@ -1,16 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import UsersListItem from '../../moleculs/UsersListItem/UsersListItem';
-import { StyledList } from './UsersList.styles';
+import { StyledList } from './StudentsList.styles';
 import { UserShape } from 'types';
 import { Title } from 'components/atoms/Title/Title';
+import { useParams } from 'react-router-dom';
+import { useStudents } from '../../../hooks/useStudents';
 
-const UsersList = ({ users }) => {
+const UsersList = () => {
+  const { id } = useParams();
+  const { students } = useStudents({ groupId: id });
   return (
     <>
       <Title>Students list</Title>
       <StyledList>
-        {users.map((userData) => (
+        {students.map((userData) => (
           <UsersListItem key={userData.name} userData={userData} />
         ))}
       </StyledList>

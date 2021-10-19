@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import UsersListItem from '../../moleculs/UsersListItem/UsersListItem';
+import StudentsListItem from '../../moleculs/UsersListItem/StudentsListItem';
 import { StyledList } from './StudentsList.styles';
 import { Title } from 'components/atoms/Title/Title';
 import { useParams } from 'react-router-dom';
 import { useStudents } from '../../../hooks/useStudents';
 
-const StudentsList = () => {
+const StudentsList = ({ handleOpenStudentDetails }) => {
   const [students, setStudents] = useState([]);
   const { id } = useParams();
-  const { getStudents } = useStudents();
+  const { getStudentsByGroup } = useStudents();
 
   useEffect(() => {
     (async () => {
-      const students = await getStudents(id);
+      const students = await getStudentsByGroup(id);
       setStudents(students);
     })();
-  }, [getStudents, id]);
+  }, [getStudentsByGroup, id]);
   return (
     <>
       <Title>Students list</Title>
       <StyledList>
         {students.map((userData) => (
-          <UsersListItem key={userData.name} userData={userData} />
+          <StudentsListItem
+            onClick={() => handleOpenStudentDetails(userData.id)}
+            key={userData.name}
+            userData={userData}
+          />
         ))}
       </StyledList>
     </>

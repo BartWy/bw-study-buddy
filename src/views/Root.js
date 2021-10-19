@@ -10,7 +10,6 @@ import {
   Redirect,
 } from 'react-router-dom';
 import MainTemplate from '../components/templates/MainTemplate';
-import AddUser from 'views/AddUser';
 import Dashboard from 'views/Dashboard';
 
 const Root = () => {
